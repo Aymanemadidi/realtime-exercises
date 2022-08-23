@@ -15,21 +15,40 @@ chat.addEventListener("submit", function (e) {
 });
 
 async function postNewMsg(user, text) {
-  // post to /poll a new message
-  // write code here
+  const data = {
+    user,
+    text,
+  };
+  const options = {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "content-type": "application/json",
+    },
+  };
+  await fetch("/poll", options);
 }
 
 async function getNewMsgs() {
-  // poll the server
-  // write code here
+  let json;
+  try {
+    const res = await fetch("/poll");
+    json = await res.json();
+    console.log(json);
+  } catch (e) {
+    console.error(e);
+  }
+  allChat = json.msg;
+  render();
+  setTimeout(getNewMsgs, INTERVAL);
 }
 
 function render() {
   // as long as allChat is holding all current messages, this will render them
   // into the ui. yes, it's inefficent. yes, it's fine for this example
-  const html = allChat.map(({ user, text, time, id }) =>
-    template(user, text, time, id)
-  );
+  const html = allChat.map(({ user, text, time, id }) => {
+    return template(user, text, time, id);
+  });
   msgs.innerHTML = html.join("\n");
 }
 

@@ -3,16 +3,19 @@ import bodyParser from "body-parser";
 import nanobuffer from "nanobuffer";
 import morgan from "morgan";
 
-const app = express();
+// set up a limited array
 const msg = new nanobuffer(50);
 const getMsgs = () => Array.from(msg).reverse();
 
+// feel free to take out, this just seeds the server with at least one message
 msg.push({
   user: "brian",
   text: "hi",
   time: Date.now(),
 });
 
+// get express ready to run
+const app = express();
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(express.static("frontend"));
@@ -32,11 +35,10 @@ app.post("/poll", function (req, res) {
     time: Date.now(),
   });
 
-  res.json({
-    status: "ok",
-  });
+  res.json({ status: "ok" });
 });
 
+// start the server
 const port = process.env.PORT || 3000;
 app.listen(port);
 console.log(`listening on http://localhost:${port}`);
